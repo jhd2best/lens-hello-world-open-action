@@ -14,10 +14,10 @@ contract HelloWorldScript is Script {
         address moduleOwner = vm.envAddress("MODULE_OWNER");
         vm.startBroadcast(deployerPrivateKey);
 
-        IHelloWorld helloWorld = new HelloWorld();
+        address storyProxyAddress = vm.envAddress("STORY_PROXY");
         address lensHubProxyAddress = vm.envAddress("LENS_HUB_PROXY");
 
-        new HelloWorldOpenAction(lensHubProxyAddress, address(helloWorld), address(moduleOwner));
+        new HelloWorldOpenAction(lensHubProxyAddress, address(storyProxyAddress), address(moduleOwner));
 
         vm.stopBroadcast();
     }

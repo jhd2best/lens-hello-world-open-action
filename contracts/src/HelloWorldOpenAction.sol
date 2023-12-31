@@ -6,14 +6,14 @@ import {HubRestricted} from 'lens/HubRestricted.sol';
 import {Types} from 'lens/Types.sol';
 import {IPublicationActionModule} from 'lens/IPublicationActionModule.sol';
 import {LensModuleMetadata} from 'lens/LensModuleMetadata.sol';
-import {IHelloWorld} from './IHelloWorld.sol';
+import {IIPAssetRegistry} from './IIPAssetRegistry.sol';
 
 contract HelloWorldOpenAction is HubRestricted, IPublicationActionModule, LensModuleMetadata {
     mapping(uint256 profileId => mapping(uint256 pubId => string initMessage)) internal _initMessages;
-    IHelloWorld internal _helloWorld;
+    IIPAssetRegistry internal _iPAssetRegistry;
     
-    constructor(address lensHubProxyContract, address helloWorldContract, address moduleOwner) HubRestricted(lensHubProxyContract) LensModuleMetadata(moduleOwner) {
-        _helloWorld = IHelloWorld(helloWorldContract);
+    constructor(address lensHubProxyContract, address storyContract, address moduleOwner) HubRestricted(lensHubProxyContract) LensModuleMetadata(moduleOwner) {
+        _iPAssetRegistry = IIPAssetRegistry(storyContract);
     }
 
     function supportsInterface(bytes4 interfaceID) public pure override returns (bool) {
@@ -40,7 +40,32 @@ contract HelloWorldOpenAction is HubRestricted, IPublicationActionModule, LensMo
         (string memory actionMessage) = abi.decode(params.actionModuleData, (string));
 
         bytes memory combinedMessage = abi.encodePacked(initMessage, " ", actionMessage);
-        _helloWorld.helloWorld(string(combinedMessage), params.transactionExecutor);
+        
+        // register IP asset
+        (uint256 globalId, uint256 localId) = _iPAssetRegistry.registerIPAsset(
+            address(0x59d0f50a48F96Aa569a7b1db9Fe979e1fBC52020),
+            IIPAssetRegistry.RegisterIPAssetParams(
+                // todo
+                address(this),
+                0,
+                string(combinedMessage),
+                0x0000000000000000000000000000000000000000000000000000000000000000,
+                "https://hey.xyz/posts/0x01d7db-0x025a"
+            ),
+            0,
+            new bytes[](0),
+            new bytes[](0)
+        );
+
+        // transfer IP asset to user
+        _iPAssetRegistry.transferIPAsset(
+            address(0x59d0f50a48F96Aa569a7b1db9Fe979e1fBC52020),
+            address(this),
+            params.transactionExecutor,
+            globalId,
+            new bytes[](0),
+            new bytes[](0)
+        );
         
         return combinedMessage;
     }
