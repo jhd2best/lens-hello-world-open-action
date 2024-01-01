@@ -7,7 +7,6 @@ import { useWalletClient } from "wagmi";
 import { useLensHelloWorld } from "../context/LensHelloWorldContext";
 import { publicClient } from "../main";
 import { mode, uiConfig } from "../utils/constants";
-import { fetchInitMessage } from "../utils/fetchInitMessage";
 import { lensHubAbi } from "../utils/lensHubAbi";
 import { serializeLink } from "../utils/serializeLink";
 import { PostCreatedEventFormatted } from "../utils/types";
@@ -137,7 +136,7 @@ const ActionBox = ({
       <div className="flex flex-col justify-center items-center">
         <p>ProfileID: {post.args.postParams.profileId}</p>
         <p>PublicationID: {post.args.pubId}</p>
-        <p>Initialize Message: {fetchInitMessage(post)}</p>
+        {/*<p>Initialize Message: {fetchInitMessage(post)}</p>*/}
         <img
           className="my-3 rounded-2xl"
           src={serializeLink(post.args.postParams.contentURI)}
@@ -154,7 +153,7 @@ const ActionBox = ({
       </div>
       <div>
         <p className="mb-3">
-          Action message (will be emitted in HelloWorld event)
+          Action message (will be emitted in Story event)
         </p>
         <Input
           id={`initializeTextId-${post.args.pubId}`}

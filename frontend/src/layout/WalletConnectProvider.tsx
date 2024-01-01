@@ -7,8 +7,8 @@ import { network } from "@/utils/constants";
 const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
 
 const metadata = {
-  name: "Lens Hello World Open Action",
-  description: "Demo of Lens open action calling helloWorld function",
+  name: "Lens Story Open Action",
+  description: "Demo of Lens open action calling Story function",
   url: "https://hello-world-open-action.vercel.com",
   icons: [
     "https://ipfs.io/ipfs/QmQGYyua2hhaZa6ByemzyA2xvDhbgcCeMmF6pxhjZ2Y9a1",

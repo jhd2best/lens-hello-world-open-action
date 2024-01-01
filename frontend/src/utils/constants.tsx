@@ -1,4 +1,4 @@
-export const network: string = "polygon"; // options: 'polygon', 'mumbai'
+export const network: string = "mumbai"; // options: 'polygon', 'mumbai'
 
 // mode flag sets whether to fetch smart post instances from Lens API or querying directly from contract events
 // Mumbai open actions are always indexed on the Lens API, Polygon actions need to be allowlisted on the API (though they are permisionless on-chain)
@@ -37,10 +37,10 @@ export const uiConfig: UiConfig =
         }`,
       }
     : {
-        helloWorldContractAddress: "0x4ae4400c4f965F818f3E0b66e9b0ef5721146Bc0",
-        helloWorldContractStartBlock: 42984295,
-        openActionContractAddress: "0x038D178a5aF79fc5BdbB436daA6B9144c669A93F",
-        openActionContractStartBlock: 42984295,
+        helloWorldContractAddress: "0xf3ceac86E87896f058c3aE523Ca820dB4ff0d176",
+        helloWorldContractStartBlock: 44154911,
+        openActionContractAddress: "0xf3ceac86E87896f058c3aE523Ca820dB4ff0d176",
+        openActionContractStartBlock: 44154911,
         lensHubProxyAddress: "0x4fbffF20302F3326B20052ab9C217C44F6480900",
         collectActionContractAddress:
           "0x4FdAae7fC16Ef41eAE8d8f6578d575C9d64722f2",
