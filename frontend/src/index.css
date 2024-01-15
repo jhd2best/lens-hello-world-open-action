@@ -127,3 +127,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.color-blue{
+  color: blue;
+}

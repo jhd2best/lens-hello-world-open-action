@@ -145,7 +145,7 @@ const ActionBox = ({
               <p>IpOrgId: {post.ipAssetMintedEvent.args.ipOrgId}</p>
               <p>GlobalId: {post.ipAssetMintedEvent.args.globalId}</p>
               <p>LocalId: {post.ipAssetMintedEvent.args.localId}</p>
-              <p><a href={openseaLink(post.ipAssetMintedEvent)} target="_blank">opensea</a></p>
+              <a className="color-blue" href={openseaLink(post.ipAssetMintedEvent)} target="_blank">see it in opensea</a>
             </div>
         )}
         <img
