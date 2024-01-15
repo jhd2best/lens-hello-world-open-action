@@ -106,7 +106,7 @@ export const Create = () => {
                 onChange={(e) => setURI(e.target.value)}
               />
               <p className="my-2">
-                Initialize message (will be emitted in HelloWorld event)
+                Initialize message (will be emitted in Story event)
               </p>
               <Input
                 placeholder="Message"

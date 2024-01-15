@@ -2,12 +2,12 @@ import { ReactNode, FC, useState, useEffect, useCallback } from "react";
 import { useAccount } from "wagmi";
 import LensHelloWorldContext from "./LensHelloWorldContext";
 import {
-  GreetEvent,
-  GreetEventFormatted,
+  IPAssetMintedEvent,
+  IPAssetMintedEventFormatted,
   PostCreatedEvent,
   PostCreatedEventFormatted,
   convertPostEventToSerializable,
-  convertGreetEventToSerializable,
+  convertIPAssetMintedEventToSerializable,
   LoginData,
 } from "../utils/types";
 import { network, uiConfig } from "../utils/constants";
@@ -27,7 +27,6 @@ export const LensHelloWorldProvider: FC<LensHelloWorldProviderProps> = ({
   const [profileId, setProfileId] = useState<number | undefined>();
   const { address } = useAccount();
   const [posts, setPosts] = useState<PostCreatedEventFormatted[]>([]);
-  const [greetings, setGreetings] = useState<GreetEventFormatted[]>([]);
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState<LoginData>();
 
@@ -44,16 +43,9 @@ export const LensHelloWorldProvider: FC<LensHelloWorldProviderProps> = ({
     const savedPostEvents: PostCreatedEventFormatted[] = JSON.parse(
       localStorage.getItem("postEvents") || "[]"
     );
-    const savedHelloWorldEvents: GreetEventFormatted[] = JSON.parse(
-      localStorage.getItem("helloWorldEvents") || "[]"
-    );
 
     if (savedPostEvents.length) {
       setPosts(savedPostEvents);
-    }
-
-    if (savedHelloWorldEvents) {
-      setGreetings(savedHelloWorldEvents);
     }
 
     const startBlock = savedCurrentBlock
@@ -67,12 +59,9 @@ export const LensHelloWorldProvider: FC<LensHelloWorldProviderProps> = ({
     const postEventsMap = new Map(
       savedPostEvents.map((event) => [event.transactionHash, event])
     );
-    const helloWorldEventsMap = new Map(
-      savedHelloWorldEvents.map((event) => [event.transactionHash, event])
-    );
 
-    for (let i = startBlock; i < currentBlock; i += 2000) {
-      const toBlock = i + 1999 > currentBlock ? currentBlock : i + 1999;
+    for (let i = startBlock; i < currentBlock; i += 20000) {
+      const toBlock = i + 19999 > currentBlock ? currentBlock : i + 19999;
 
       const postEvents = await publicClient({
         chainId: network === "polygon" ? 137 : 80001,
@@ -89,14 +78,14 @@ export const LensHelloWorldProvider: FC<LensHelloWorldProviderProps> = ({
       }).getContractEvents({
         address: uiConfig.helloWorldContractAddress,
         abi: helloWorldAbi,
-        eventName: "Greet",
+        eventName: "IPAssetMinted",
         fromBlock: BigInt(i),
         toBlock: BigInt(toBlock),
       });
 
       const postEventsParsed = postEvents as unknown as PostCreatedEvent[];
       const helloWorldEventsParsed =
-        helloWorldEvents as unknown as GreetEvent[];
+        helloWorldEvents as unknown as IPAssetMintedEvent[];
 
       const filteredEvents = postEventsParsed.filter((event) => {
         return event.args.postParams.actionModules.includes(
@@ -108,30 +97,25 @@ export const LensHelloWorldProvider: FC<LensHelloWorldProviderProps> = ({
         convertPostEventToSerializable(event)
       );
 
-      const serializableGreetEvents = helloWorldEventsParsed.map((event) =>
-        convertGreetEventToSerializable(event)
+      const serializableIPAssetMintedEvents = helloWorldEventsParsed.map((event) =>
+        convertIPAssetMintedEventToSerializable(event)
       );
 
-      serializablePostEvents.forEach((event) =>
+      const serializableIPAssetMap:Record<string, IPAssetMintedEventFormatted> = {}
+      serializableIPAssetMintedEvents.forEach(it=> serializableIPAssetMap[it.transactionHash] = it)
+
+      serializablePostEvents.forEach((event) =>{
+        event.ipAssetMintedEvent = serializableIPAssetMap[event.transactionHash]
         postEventsMap.set(event.transactionHash, event)
-      );
-      serializableGreetEvents.forEach((event) =>
-        helloWorldEventsMap.set(event.transactionHash, event)
-      );
+      });
     }
 
     const allPostEvents = Array.from(postEventsMap.values());
-    const allHelloWorldEvents = Array.from(helloWorldEventsMap.values());
 
     localStorage.setItem("currentBlock", currentBlock.toString());
     localStorage.setItem("postEvents", JSON.stringify(allPostEvents));
-    localStorage.setItem(
-      "helloWorldEvents",
-      JSON.stringify(allHelloWorldEvents)
-    );
 
     setPosts(allPostEvents);
-    setGreetings(allHelloWorldEvents);
     setLoading(false);
   }, []);
 
@@ -176,7 +160,6 @@ export const LensHelloWorldProvider: FC<LensHelloWorldProviderProps> = ({
         handle,
         address,
         posts,
-        greetings,
         refresh,
         clear: () => {
           setProfileId(undefined);

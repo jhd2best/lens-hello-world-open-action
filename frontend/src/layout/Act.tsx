@@ -9,7 +9,7 @@ import { publicClient } from "../main";
 import { mode, uiConfig } from "../utils/constants";
 import { lensHubAbi } from "../utils/lensHubAbi";
 import { serializeLink } from "../utils/serializeLink";
-import { PostCreatedEventFormatted } from "../utils/types";
+import {IPAssetMintedEventFormatted, PostCreatedEventFormatted} from "../utils/types";
 //import { ProfileId } from "@lens-protocol/metadata";
 
 const ActionBox = ({
@@ -131,15 +131,26 @@ const ActionBox = ({
     }
   };
 
+  function openseaLink(ipAssetMintedEvent: IPAssetMintedEventFormatted) {
+    return `https://testnets.opensea.io/assets/mumbai/${ipAssetMintedEvent.args.ipOrgId}/${ipAssetMintedEvent.args.localId}`;
+  }
+
   return (
     <div className="flex flex-col border rounded-xl px-5 py-3 mb-3 justify-center">
       <div className="flex flex-col justify-center items-center">
         <p>ProfileID: {post.args.postParams.profileId}</p>
         <p>PublicationID: {post.args.pubId}</p>
-        {/*<p>Initialize Message: {fetchInitMessage(post)}</p>*/}
+        {post.ipAssetMintedEvent && (
+            <div className="flex flex-col justify-center items-center">
+              <p>IpOrgId: {post.ipAssetMintedEvent.args.ipOrgId}</p>
+              <p>GlobalId: {post.ipAssetMintedEvent.args.globalId}</p>
+              <p>LocalId: {post.ipAssetMintedEvent.args.localId}</p>
+              <a className="color-blue" href={openseaLink(post.ipAssetMintedEvent)} target="_blank">see it in opensea</a>
+            </div>
+        )}
         <img
-          className="my-3 rounded-2xl"
-          src={serializeLink(post.args.postParams.contentURI)}
+            className="my-3 rounded-2xl"
+            src={serializeLink(post.args.postParams.contentURI)}
           alt="Post"
         />
         <Button asChild variant="link">
@@ -153,7 +164,7 @@ const ActionBox = ({
       </div>
       <div>
         <p className="mb-3">
-          Action message (will be emitted in Story event)
+          Action message
         </p>
         <Input
           id={`initializeTextId-${post.args.pubId}`}
@@ -214,11 +225,15 @@ export const Actions = () => {
       )
     : activePosts;
 
+  filteredPosts = filteredPosts.filter(it => !!it.ipAssetMintedEvent)
+
   filteredPosts = filteredPosts.sort((a, b) => {
     const blockNumberA = parseInt(a.blockNumber, 10);
     const blockNumberB = parseInt(b.blockNumber, 10);
     return blockNumberB - blockNumberA;
   });
+
+  console.log(filteredPosts)
 
   return (
     <>

@@ -1,14 +1,13 @@
 import "../styles/Action.css";
 import { useLogin, useProfiles } from "@lens-protocol/react-web";
 import { Actions } from "./Act";
-import { Events } from "./Events";
 import { useLensHelloWorld } from "../context/LensHelloWorldContext";
 import { Create } from "./Create";
 import { useEffect, useState } from "react";
 import { LoginData } from "../utils/types";
 import { Button } from "@/components/ui/button";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { PenLine, Rows, Activity, LogIn, Unplug } from "lucide-react";
+import { PenLine, Rows, LogIn, Unplug } from "lucide-react";
 import { network } from "@/utils/constants";
 
 export const Home = () => {
@@ -94,14 +93,6 @@ function Profiles({
           <Rows className="mr-2 h-4 w-4" />
           View Smart Posts
         </Button>
-        <Button
-          variant={activeSection === "events" ? "default" : "secondary"}
-          onClick={() => setActiveSection("events")}
-          className="px-10 mx-2"
-        >
-          <Activity className="mr-2 h-4 w-4" />
-          Events
-        </Button>
       </div>
       <Button
         variant="outline"
@@ -135,7 +126,6 @@ function Profiles({
       )}
       {activeSection === "create" && <Create />}
       {activeSection === "actions" && <Actions />}
-      {activeSection === "events" && <Events />}
     </div>
   );
 }

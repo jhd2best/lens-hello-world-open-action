@@ -1,1 +1,27 @@
-export const helloWorldAbi = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "message", "type": "string" }, { "indexed": false, "internalType": "address", "name": "actor", "type": "address" }], "name": "Greet", "type": "event" }, { "inputs": [{ "internalType": "string", "name": "message", "type": "string" }, { "internalType": "address", "name": "actor", "type": "address" }], "name": "helloWorld", "outputs": [], "stateMutability": "nonpayable", "type": "function" }] as const;
+export const helloWorldAbi = [
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "ipOrgId",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "globalId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "localId",
+                "type": "uint256"
+            }
+        ],
+        "name": "IPAssetMinted",
+        "type": "event"
+    }
+] as const;
