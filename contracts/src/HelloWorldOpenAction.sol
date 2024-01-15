@@ -6,14 +6,17 @@ import {HubRestricted} from 'lens/HubRestricted.sol';
 import {Types} from 'lens/Types.sol';
 import {IPublicationActionModule} from 'lens/IPublicationActionModule.sol';
 import {LensModuleMetadata} from 'lens/LensModuleMetadata.sol';
-import {IIPAssetRegistry} from './IIPAssetRegistry.sol';
+import {IStoryProtocol} from './IStoryProtocol.sol';
 
 contract HelloWorldOpenAction is HubRestricted, IPublicationActionModule, LensModuleMetadata {
     mapping(uint256 profileId => mapping(uint256 pubId => string initMessage)) internal _initMessages;
-    IIPAssetRegistry internal _iPAssetRegistry;
+    IStoryProtocol internal _iStoryProtocol;
+
+    event IPAssetMinted(address ipOrgId, uint256 globalId, uint256 localId);
+    event IPOrgRegisted(address ipOrgId);
     
     constructor(address lensHubProxyContract, address storyContract, address moduleOwner) HubRestricted(lensHubProxyContract) LensModuleMetadata(moduleOwner) {
-        _iPAssetRegistry = IIPAssetRegistry(storyContract);
+        _iStoryProtocol = IStoryProtocol(storyContract);
     }
 
     function supportsInterface(bytes4 interfaceID) public pure override returns (bool) {
@@ -30,6 +33,61 @@ contract HelloWorldOpenAction is HubRestricted, IPublicationActionModule, LensMo
 
         _initMessages[profileId][pubId] = initMessage;
 
+        bytes memory combinedIPOrgName = abi.encodePacked("Lens Post");
+        bytes memory combinedMessage = abi.encodePacked(initMessage);
+        bytes memory combinedMetaUrl = abi.encodePacked("https://hey.xyz/posts/",pubId);
+        string[] memory ipAssetTypes_ = new string[](2);
+        ipAssetTypes_[0] = "STORY";
+        ipAssetTypes_[1] = "ITEM";
+
+        // create IPOrg
+        address ipOrg = _iStoryProtocol.registerIpOrg(
+            address(this),
+            string(combinedIPOrgName),
+            "LENS",
+            ipAssetTypes_
+        );
+
+        emit IPOrgRegisted(ipOrg);
+
+        // configure IPOrg license
+        _iStoryProtocol.configureIpOrgLicensing(
+            ipOrg,
+            IStoryProtocol.LicensingConfig(
+                "SPUML-1.0",
+                new IStoryProtocol.ParamValue[](0),
+                IStoryProtocol.LicensorConfig.IpOrgOwnerAlways
+            )
+        );
+
+         // register IP asset
+        (uint256 globalId, uint256 localId) = _iStoryProtocol.registerIPAsset(
+            ipOrg,
+            IStoryProtocol.RegisterIPAssetParams(
+                address(this),
+                0,
+                string(combinedMessage),
+                0x0000000000000000000000000000000000000000000000000000000000000000,
+                string(combinedMetaUrl)
+            ),
+            0,
+            new bytes[](0),
+            new bytes[](0)
+        );
+
+        // transfer IP asset to user
+        // _iStoryProtocol.transferIPAsset(
+        //     ipOrg,
+        //     address(this),
+        //     msg.sender,
+        //     globalId,
+        //     new bytes[](0),
+        //     new bytes[](0)
+        // );
+
+        // sent event
+        emit IPAssetMinted(ipOrg, globalId, localId);
+
         return data;
     }
 
@@ -40,32 +98,8 @@ contract HelloWorldOpenAction is HubRestricted, IPublicationActionModule, LensMo
         (string memory actionMessage) = abi.decode(params.actionModuleData, (string));
 
         bytes memory combinedMessage = abi.encodePacked(initMessage, " ", actionMessage);
-        
-        // register IP asset
-        (uint256 globalId, uint256 localId) = _iPAssetRegistry.registerIPAsset(
-            address(0x59d0f50a48F96Aa569a7b1db9Fe979e1fBC52020),
-            IIPAssetRegistry.RegisterIPAssetParams(
-                // todo
-                address(this),
-                0,
-                string(combinedMessage),
-                0x0000000000000000000000000000000000000000000000000000000000000000,
-                "https://hey.xyz/posts/0x01d7db-0x025a"
-            ),
-            0,
-            new bytes[](0),
-            new bytes[](0)
-        );
 
-        // transfer IP asset to user
-        _iPAssetRegistry.transferIPAsset(
-            address(0x59d0f50a48F96Aa569a7b1db9Fe979e1fBC52020),
-            address(this),
-            params.transactionExecutor,
-            globalId,
-            new bytes[](0),
-            new bytes[](0)
-        );
+        emit IPAssetMinted(address(this), 666, 888);
         
         return combinedMessage;
     }

@@ -172,3 +172,4 @@ broadcast/
 cache/
 .DS_Store
 /.idea
+/frontend/.vercel
