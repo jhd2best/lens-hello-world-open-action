@@ -37,10 +37,10 @@ export const uiConfig: UiConfig =
         }`,
       }
     : {
-        helloWorldContractAddress: "0xf3ceac86E87896f058c3aE523Ca820dB4ff0d176",
-        helloWorldContractStartBlock: 44154911,
-        openActionContractAddress: "0xf3ceac86E87896f058c3aE523Ca820dB4ff0d176",
-        openActionContractStartBlock: 44154911,
+        helloWorldContractAddress: "0xE16D463f429fE8DD53E6A4Fce57FE21efd65Ef1C",
+        helloWorldContractStartBlock: 44786461,
+        openActionContractAddress: "0xE16D463f429fE8DD53E6A4Fce57FE21efd65Ef1C",
+        openActionContractStartBlock: 44786461,
         lensHubProxyAddress: "0x4fbffF20302F3326B20052ab9C217C44F6480900",
         collectActionContractAddress:
           "0x4FdAae7fC16Ef41eAE8d8f6578d575C9d64722f2",

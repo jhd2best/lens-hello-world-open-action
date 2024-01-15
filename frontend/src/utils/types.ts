@@ -36,21 +36,24 @@ export type PostCreatedEventFormatted = {
     };
     blockNumber: string;
     transactionHash: string;
+    ipAssetMintedEvent ?: IPAssetMintedEventFormatted;
 };
 
-export type GreetEvent = {
+export type IPAssetMintedEvent = {
     args: {
-        message: string;
-        actor: string;
+        ipOrgId: string;
+        globalId: bigint;
+        localId: bigint;
     }
     blockNumber: number;
     transactionHash: string;
 }
 
-export type GreetEventFormatted = {
+export type IPAssetMintedEventFormatted = {
     args: {
-        message: string;
-        actor: string;
+        ipOrgId: string;
+        globalId: string;
+        localId: string;
     }
     blockNumber: string;
     transactionHash: string;
@@ -74,11 +77,16 @@ export function convertPostEventToSerializable(
     };
 }
 
-export function convertGreetEventToSerializable(
-    event: GreetEvent
-): GreetEventFormatted {
+export function convertIPAssetMintedEventToSerializable(
+    event: IPAssetMintedEvent
+): IPAssetMintedEventFormatted {
     return {
-        ...event,
+        args: {
+            ipOrgId: event.args.ipOrgId,
+            globalId: event.args.globalId.toString(),
+            localId: event.args.localId.toString(),
+        },
+        transactionHash: event.transactionHash,
         blockNumber: event.blockNumber.toString(),
     };
 }
