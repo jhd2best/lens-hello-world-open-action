@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import { usePublications } from "@lens-protocol/react-web";
 import { useState } from "react";
 import { encodeAbiParameters, encodeFunctionData, zeroAddress } from "viem";
@@ -23,58 +23,58 @@ const ActionBox = ({
   profileId?: number;
   refresh: () => void;
 }) => {
-  const [actionText, setActionText] = useState<string>("");
+  // const [actionText, setActionText] = useState<string>("");
   const [createState, setCreateState] = useState<string | undefined>();
   const [txHash, setTxHash] = useState<string | undefined>();
   const { data: walletClient } = useWalletClient();
 
-  const executeHelloWorld = async (
-    post: PostCreatedEventFormatted,
-    actionText: string
-  ) => {
-    const encodedActionData = encodeAbiParameters(
-      [{ type: "string" }],
-      [actionText]
-    );
-
-    const args = {
-      publicationActedProfileId: BigInt(post.args.postParams.profileId || 0),
-      publicationActedId: BigInt(post.args.pubId),
-      actorProfileId: BigInt(profileId || 0),
-      referrerProfileIds: [],
-      referrerPubIds: [],
-      actionModuleAddress: uiConfig.openActionContractAddress,
-      actionModuleData: encodedActionData as `0x${string}`,
-    };
-
-    const calldata = encodeFunctionData({
-      abi: lensHubAbi,
-      functionName: "act",
-      args: [args],
-    });
-
-    setCreateState("PENDING IN WALLET");
-    try {
-      const hash = await walletClient!.sendTransaction({
-        to: uiConfig.lensHubProxyAddress,
-        account: address,
-        data: calldata as `0x${string}`,
-      });
-      setCreateState("PENDING IN MEMPOOL");
-      setTxHash(hash);
-      const result = await publicClient({
-        chainId: 80001,
-      }).waitForTransactionReceipt({ hash });
-      if (result.status === "success") {
-        setCreateState("SUCCESS");
-        refresh();
-      } else {
-        setCreateState("CREATE TXN REVERTED");
-      }
-    } catch (e) {
-      setCreateState(`ERROR: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  };
+  // const executeHelloWorld = async (
+  //   post: PostCreatedEventFormatted,
+  //   actionText: string
+  // ) => {
+  //   const encodedActionData = encodeAbiParameters(
+  //     [{ type: "string" }],
+  //     [actionText]
+  //   );
+  //
+  //   const args = {
+  //     publicationActedProfileId: BigInt(post.args.postParams.profileId || 0),
+  //     publicationActedId: BigInt(post.args.pubId),
+  //     actorProfileId: BigInt(profileId || 0),
+  //     referrerProfileIds: [],
+  //     referrerPubIds: [],
+  //     actionModuleAddress: uiConfig.openActionContractAddress,
+  //     actionModuleData: encodedActionData as `0x${string}`,
+  //   };
+  //
+  //   const calldata = encodeFunctionData({
+  //     abi: lensHubAbi,
+  //     functionName: "act",
+  //     args: [args],
+  //   });
+  //
+  //   setCreateState("PENDING IN WALLET");
+  //   try {
+  //     const hash = await walletClient!.sendTransaction({
+  //       to: uiConfig.lensHubProxyAddress,
+  //       account: address,
+  //       data: calldata as `0x${string}`,
+  //     });
+  //     setCreateState("PENDING IN MEMPOOL");
+  //     setTxHash(hash);
+  //     const result = await publicClient({
+  //       chainId: 80001,
+  //     }).waitForTransactionReceipt({ hash });
+  //     if (result.status === "success") {
+  //       setCreateState("SUCCESS");
+  //       refresh();
+  //     } else {
+  //       setCreateState("CREATE TXN REVERTED");
+  //     }
+  //   } catch (e) {
+  //     setCreateState(`ERROR: ${e instanceof Error ? e.message : String(e)}`);
+  //   }
+  // };
 
   const executeCollect = async (post: PostCreatedEventFormatted) => {
     const baseFeeCollectModuleTypes = [
@@ -142,9 +142,7 @@ const ActionBox = ({
         <p>PublicationID: {post.args.pubId}</p>
         {post.ipAssetMintedEvent && (
             <div className="flex flex-col justify-center items-center">
-              <p>IpOrgId: {post.ipAssetMintedEvent.args.ipOrgId}</p>
-              <p>GlobalId: {post.ipAssetMintedEvent.args.globalId}</p>
-              <p>LocalId: {post.ipAssetMintedEvent.args.localId}</p>
+              <p>IP Asset ID: {post.ipAssetMintedEvent.args.globalId}</p>
               <a className="color-blue" href={openseaLink(post.ipAssetMintedEvent)} target="_blank">see it in opensea</a>
             </div>
         )}
@@ -162,26 +160,26 @@ const ActionBox = ({
           </a>
         </Button>
       </div>
-      <div>
-        <p className="mb-3">
-          Action message
-        </p>
-        <Input
-          id={`initializeTextId-${post.args.pubId}`}
-          type="text"
-          value={actionText}
-          onChange={(e) => setActionText(e.target.value)}
-          disabled={!profileId}
-        />
-      </div>
-      {profileId && (
-        <Button
-          className="mt-3"
-          onClick={() => executeHelloWorld(post, actionText)}
-        >
-          Post Message
-        </Button>
-      )}
+      {/*<div>*/}
+      {/*  <p className="mb-3">*/}
+      {/*    Action message*/}
+      {/*  </p>*/}
+      {/*  <Input*/}
+      {/*    id={`initializeTextId-${post.args.pubId}`}*/}
+      {/*    type="text"*/}
+      {/*    value={actionText}*/}
+      {/*    onChange={(e) => setActionText(e.target.value)}*/}
+      {/*    disabled={!profileId}*/}
+      {/*  />*/}
+      {/*</div>*/}
+      {/*{profileId && (*/}
+      {/*  <Button*/}
+      {/*    className="mt-3"*/}
+      {/*    onClick={() => executeHelloWorld(post, actionText)}*/}
+      {/*  >*/}
+      {/*    Post Message*/}
+      {/*  </Button>*/}
+      {/*)}*/}
       {profileId &&
         post.args.postParams.actionModules.includes(
           uiConfig.collectActionContractAddress

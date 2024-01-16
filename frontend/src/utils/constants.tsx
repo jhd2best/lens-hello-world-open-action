@@ -38,9 +38,9 @@ export const uiConfig: UiConfig =
       }
     : {
         helloWorldContractAddress: "0xE16D463f429fE8DD53E6A4Fce57FE21efd65Ef1C",
-        helloWorldContractStartBlock: 44786461,
+        helloWorldContractStartBlock: 44822752,
         openActionContractAddress: "0xE16D463f429fE8DD53E6A4Fce57FE21efd65Ef1C",
-        openActionContractStartBlock: 44786461,
+        openActionContractStartBlock: 44822752,
         lensHubProxyAddress: "0x4fbffF20302F3326B20052ab9C217C44F6480900",
         collectActionContractAddress:
           "0x4FdAae7fC16Ef41eAE8d8f6578d575C9d64722f2",
